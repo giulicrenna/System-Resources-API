@@ -1,0 +1,120 @@
+{
+  "name": "Telegram System Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": "1044680169",
+        "text": "=*Uso de ram*: {{ $json.uso_ram }}\n*Uso de cpu*: {{ $json.uso_cpu }}\n*Kilobytes enviados*: {{ $json.uso_red.kb_enviados }}\n*Kilobytes recibidos*: {{ $json.uso_red.kb_recibidos }}\n*Dirección pública*: {{ $json.ip_publica}}\n*Dirección local*: {{ $json.ip_local }}\n*Estado de docker*: {{  $json.estado_docker_contenedores\n}} ",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "5b890d30-f47e-4cf0-9747-ae9eb14cedff",
+      "name": "Send back the JSON content of the message",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        860,
+        460
+      ],
+      "typeVersion": 1.1,
+      "credentials": {
+        "telegramApi": {
+          "id": "tObeUOf3zPh0Xryd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "7521ba90-b0c2-4582-b02f-3c089684a426",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        360,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://192.168.0.18:8002/info",
+        "options": {}
+      },
+      "id": "8a389681-af8b-43e7-898b-f0c7b9d141dd",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        600,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "id": "3c0bbb5a-227b-4c41-8938-64a63f9d3877",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        360,
+        300
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send back the JSON content of the message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "versionId": "1bdf52af-7cec-4459-8485-5bddf334fe73",
+  "meta": {
+    "templateId": "2007",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "47a485f9a98fc2b5f1b64683bf9e60cd25033b1b9d3e5c90eaa769a0c6cfb675"
+  },
+  "id": "KPpC39Rf3DUl14Bf",
+  "tags": []
+}

@@ -1,0 +1,14 @@
+[Unit]
+Description=System Resource API Monitor
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/giuli/Downloads/System-Resources-API
+ExecStart=/home/giuli/Downloads/System-Resources-API/run.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
