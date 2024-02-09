@@ -1,10 +1,23 @@
 from fastapi import FastAPI
 import psutil
+import requests
 import subprocess
 import docker
 
 app = FastAPI()
 
+def get_public_ip(): 
+    try: 
+        response = requests.get('https://httpbin.org/ip') 
+        if response.status_code == 200: 
+            ip_data = response.json() 
+            public_ip = ip_data.get('origin') 
+            return public_ip 
+        else: 
+            return "Desconocida" 
+    except Exception as e: 
+        return "Desconocida" 
+ 
 def get_ram_usage():
     total_memory = round(psutil.virtual_memory().total / (1024.0 ** 3), 2)
     used_memory = round(psutil.virtual_memory().used / (1024.0 ** 3), 2)
@@ -21,7 +34,7 @@ def get_network_usage():
 
 def get_ip_address():
     try:
-        ip = subprocess.check_output(['hostname', '-I']).decode().strip()
+        ip = subprocess.check_output(['hostname', '-I']).decode().split(' ')[0]
         return ip
     except subprocess.CalledProcessError:
         return "No se pudo obtener la dirección IP"
@@ -50,7 +63,8 @@ def get_server_info() -> dict:
             "kb_enviados": get_network_usage()[0],
             "kb_recibidos": get_network_usage()[1]
         },
-        "ip": get_ip_address(),
+        "ip_publica" : get_public_ip(),
+        "ip_local": get_ip_address(),
         "estado_docker_contenedores": get_docker_containers()
     }
     return info
