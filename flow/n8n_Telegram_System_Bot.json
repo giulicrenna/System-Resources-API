@@ -4,7 +4,7 @@
     {
       "parameters": {
         "chatId": "1044680169",
-        "text": "=*Uso de ram*: {{ $json.uso_ram }}\n*Uso de cpu*: {{ $json.uso_cpu }}\n*Kilobytes enviados*: {{ $json.uso_red.kb_enviados }}\n*Kilobytes recibidos*: {{ $json.uso_red.kb_recibidos }}\n*Dirección pública*: {{ $json.ip_publica}}\n*Dirección local*: {{ $json.ip_local }}\n*Estado de docker*: {{  $json.estado_docker_contenedores\n}} ",
+        "text": "=*Uso de ram*: {{ $json.uso_ram }}\n*Uso de cpu*: {{ $json.uso_cpu }}\n*Megabytes enviados*: {{ Math.round($json.uso_red.kb_enviados / 1024) }}Mb\n*Megabytes recibidos*: {{ Math.round($json.uso_red.kb_recibidos / 1024) }}Mb\n*Dirección pública*: {{ $json.ip_publica}}\n*Dirección local*: {{ $json.ip_local }}\n*Estado de docker*:\n {{ $json.contenedores.replaceAll(',', '\\n') }}",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "Markdown"
@@ -14,7 +14,7 @@
       "name": "Send back the JSON content of the message",
       "type": "n8n-nodes-base.telegram",
       "position": [
-        860,
+        980,
         460
       ],
       "typeVersion": 1.1,
@@ -38,7 +38,7 @@
     },
     {
       "parameters": {
-        "url": "http://192.168.0.18:8002/info",
+        "url": "http://192.168.0.18:8003/info",
         "options": {}
       },
       "id": "8a389681-af8b-43e7-898b-f0c7b9d141dd",
@@ -69,6 +69,20 @@
         360,
         300
       ]
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor item in _input.all():\n\t...\n\nstring: str = \"\"\ncontainers: list = _json.estado_docker_contenedores\n\ndel _json.estado_docker_contenedores\n\nfor c in containers:\n  string += f\"{c.Nombre} is {c.Estado}, \"\n\nnew_dict: dict = {\"contenedores\": string}\n\nreturn {**new_dict, **_json}"
+      },
+      "id": "292f9d9e-c55c-41c2-8a0e-f2eee795d7c6",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        460
+      ]
     }
   ],
   "pinData": {},
@@ -88,7 +102,7 @@
       "main": [
         [
           {
-            "node": "Send back the JSON content of the message",
+            "node": "Code",
             "type": "main",
             "index": 0
           }
@@ -105,11 +119,27 @@
           }
         ]
       ]
+    },
+    "Send back the JSON content of the message": {
+      "main": [
+        []
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send back the JSON content of the message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {},
-  "versionId": "1bdf52af-7cec-4459-8485-5bddf334fe73",
+  "versionId": "3942f833-c035-4ca3-ad95-f0d68b4f5fea",
   "meta": {
     "templateId": "2007",
     "templateCredsSetupCompleted": true,
