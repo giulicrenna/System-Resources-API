@@ -1,2 +1,4 @@
 .venv
 flow/_minecraft-mc-1_logs.txt
+graph/.$dns_resolution.drawio.bkp
+*.drawio
